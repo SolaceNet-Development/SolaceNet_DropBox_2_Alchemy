@@ -1,7 +1,7 @@
 # SolaceNet DropBox API Integration
 
 ## Overview
-Integration between Dropbox API and blockchain services using Alchemy.
+Integration between Dropbox API and Ethereum blockchain services using Alchemy.
 
 ## Setup
 1. Clone the repository
@@ -166,6 +166,53 @@ curl -X POST -F "file=@/path/to/your/file.txt" http://localhost:3000/upload
 3. Verify the responses:
 - Confirm the file appears in your Dropbox folder.
 - Check the data was successfully sent to the Alchemy API.
+
+## Validation and Error Handling
+
+1. Validate Environment Variables:
+- Ensure all required environment variables are set before starting the server.
+
+```javascript
+if (!process.env.DROPBOX_ACCESS_TOKEN || !process.env.ALCHEMY_API_KEY) {
+  console.error("Missing required environment variables.");
+  process.exit(1);
+}
+```
+
+2. Validate File Uploads:
+- Check if a file is uploaded and its type is valid.
+
+```javascript
+app.post("/upload", upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).send({ error: "No file uploaded" });
+  }
+
+  const filePath = req.file.path;
+  const fileName = req.file.originalname;
+
+  // ...existing code...
+});
+```
+
+3. Handle API Errors:
+- Add detailed error handling for Dropbox and Alchemy API requests.
+
+```javascript
+try {
+  // ...existing code...
+} catch (error) {
+  if (error.response) {
+    console.error("API Error:", error.response.data);
+    res.status(500).send({ error: error.response.data });
+  } else {
+    console.error("Error:", error.message);
+    res.status(500).send({ error: "An error occurred" });
+  }
+} finally {
+  // ...existing code...
+}
+```
 
 ## Documentation Sources
 
